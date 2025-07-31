@@ -5,29 +5,16 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-app.post('/api/send', async (req, res) => {
-  const { address, amount } = req.body;
-
-  if (!address || !amount) {
-    return res.status(400).json({ error: 'Dirección y cantidad requeridas' });
+app.post('/api/send', (req, res) => {
+  const address = req.body.address;
+  if (!address) {
+    return res.status(400).json({ message: "Dirección Litecoin no válida." });
   }
 
-  try {
-    const response = await axios.post('https://faucetpay.io/api/v1/send', null, {
-      params: {
-        api_key: process.env.FAUCETPAY_API_KEY,
-        to: address,
-        amount: amount,
-        currency: 'LTC'
-      }
-    });
-
-    res.json(response.data);
-  } catch (error) {
-    console.error(error.response?.data || error.message);
-    res.status(500).json({ error: 'Error al enviar pago' });
-  }
+  console.log("Solicitud recibida para:", address);
+  return res.json({ message: `✅ Simulación: Enviaríamos LTC a ${address}` });
 });
+
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en puerto ${PORT}`);
